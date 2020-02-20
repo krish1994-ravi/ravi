@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import com.tekleads.constants.ContactConstants;
 import com.tekleads.model.Contact;
 import com.tekleads.service.ContactService;
 
@@ -26,24 +27,24 @@ public class ContactController {
 	private ContactService service;
 	
 	@RequestMapping("/showForm")
-	public String showContactHome(@ModelAttribute("contact")Contact contact) {
+	public String showContactHome(@ModelAttribute(ContactConstants.CONTACT_STR)Contact contact) {
 		logger.info("method executed");
-		return "contact_info";
+		return ContactConstants.CONTACT_INFO_STR;
 	}
 	
 	@RequestMapping(value="/save",method = RequestMethod.POST)
-	public String handleSubmitButton(Map<String,Object> map,@ModelAttribute("contact")Contact contact,RedirectAttributes attributes) {
-		logger.debug("method started");
+	public String handleSubmitButton(Map<String,Object> map,@ModelAttribute(ContactConstants.CONTACT_STR)Contact contact,RedirectAttributes attributes) {
+		logger.debug(ContactConstants.METHOD_START_STR);
 		//use service
 		boolean saveContact = service.saveContact(contact);
 		if(saveContact) {
-		   attributes.addFlashAttribute("msg", "contact added successfully");
+		   attributes.addFlashAttribute(ContactConstants.MSG_STR, "contact added successfully");
 		}
 		else {
 			logger.error("saveContact() method not executed");
-			attributes.addFlashAttribute("msg", "contact not added");
+			attributes.addFlashAttribute(ContactConstants.MSG_STR, "contact not added");
 		}
-		logger.debug("method ended");
+		logger.debug(ContactConstants.METHOD_END_STR);
 		return "redirect:/showForm";
 		
 	}
@@ -55,25 +56,25 @@ public class ContactController {
 		return "all_contacts";
 	}
 	@RequestMapping("/edit")
-	public String HandleEditContact(@ModelAttribute("contact")Contact contact,Map<String,Object> map,HttpServletRequest request) {
+	public String HandleEditContact(@ModelAttribute(ContactConstants.CONTACT_STR)Contact contact,Map<String,Object> map,HttpServletRequest request) {
 		Integer id=Integer.parseInt(request.getParameter("id"));
 		//use service
 		logger.info("get COntact By Id summary");
 		Contact con= service.getContactById(id);
 		BeanUtils.copyProperties(con, contact);
-		return "contact_info";
+		return ContactConstants.CONTACT_INFO_STR;
 	}
 	@RequestMapping("/delete")
-	public String HandleDeleteContact(RedirectAttributes attributes,HttpServletRequest request,@ModelAttribute("contact")Contact contact) {
-        logger.debug("method started");
+	public String HandleDeleteContact(RedirectAttributes attributes,HttpServletRequest request,@ModelAttribute(ContactConstants.CONTACT_STR)Contact contact) {
+        logger.debug(ContactConstants.METHOD_START_STR);
 		Integer id=Integer.parseInt(request.getParameter("id"));
 		logger.info("delete contact summary");
 		boolean deleteContact = service.deleteContact(id);
 		if(deleteContact)
-			attributes.addFlashAttribute("msg", "record deleted");
+			attributes.addFlashAttribute(ContactConstants.MSG_STR, "record deleted");
 		else
-			attributes.addFlashAttribute("msg", "record not deleted");
-		logger.debug("method ended");
+			attributes.addFlashAttribute(ContactConstants.MSG_STR, "record not deleted");
+		logger.debug(ContactConstants.METHOD_END_STR);
 		return "redirect:/allContacts";
 	}
 }
